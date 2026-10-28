@@ -5,13 +5,15 @@ import { cells, compose, spray, fontsReady } from './compose.js';
 import * as store from './store.js';
 import * as sound from './sound.js';
 import { initStaff, closeStaff } from './staff.js';
+import { openShare, closeShare, sharingReady } from './share.js';
+import * as uploader from './uploader.js';
 
-const VERSION = 'v2';
+const VERSION = 'v3';
 // Prints match the mirrored preview, which is what guests expect to see.
 const MIRROR = true;
 
 const $ = (id) => document.getElementById(id);
-const screens = ['welcome', 'layout', 'camera', 'review', 'thanks', 'staff'];
+const screens = ['welcome', 'layout', 'camera', 'review', 'share', 'thanks', 'staff'];
 const video = $('video');
 const view = $('view');
 const frame = $('frame');
@@ -64,7 +66,8 @@ setInterval(() => {
   const idle = (Date.now() - lastTouch) / 1000;
   if (state.screen === 'layout' && idle > IDLE_SECONDS) show('welcome');
   if (state.screen === 'camera' && !state.shooting && idle > IDLE_SECONDS) show('welcome');
-  if (state.screen === 'review' && idle > REVIEW_IDLE_SECONDS) finish();
+  if (state.screen === 'review' && idle > REVIEW_IDLE_SECONDS) finish({ walkedAway: true });
+  if (state.screen === 'share' && idle > REVIEW_IDLE_SECONDS) endShare();
   if (state.screen === 'staff' && idle > 180) closeStaff();
 }, 2000);
 
@@ -465,21 +468,33 @@ $('retake').addEventListener('click', () => {
   openCamera();
 });
 
-async function finish() {
+function newId() {
+  if (crypto.randomUUID) return crypto.randomUUID();
+  const b = crypto.getRandomValues(new Uint8Array(16));
+  return [...b].map((x) => x.toString(16).padStart(2, '0')).join('');
+}
+
+async function finish({ walkedAway = false } = {}) {
   if (state.saving || state.screen !== 'review') return;
   state.saving = true;
+  const id = newId();
+  let blob = null;
   try {
     if (!state.printBlob) await renderPrint();
-    if (state.printBlob) {
+    blob = state.printBlob;
+    if (blob) {
       await store.save({
-        id: crypto.randomUUID ? crypto.randomUUID() : `${Date.now()}-${Math.random().toString(36).slice(2)}`,
+        id,
         takenAt: Date.now(),
         layout: state.layout,
         theme: state.theme,
         filter: state.filter,
-        blob: state.printBlob,
+        blob,
         saved: false,
+        uploaded: false,
+        emails: [],
       });
+      uploader.flush();
     }
   } finally {
     state.saving = false;
@@ -487,11 +502,31 @@ async function finish() {
   state.shots = [];
   state.rendered = {};
   state.printBlob = null;
+  if (walkedAway) {
+    show('welcome');
+    return;
+  }
   sound.chime();
+  if (blob && sharingReady()) {
+    show('share');
+    await openShare(id, blob);
+  } else {
+    showThanks();
+  }
+}
+
+function showThanks() {
   show('thanks');
   drawArt();
   setTimeout(() => { if (state.screen === 'thanks') show('welcome'); }, 4500);
 }
+
+function endShare() {
+  closeShare();
+  showThanks();
+}
+
+$('share-done').addEventListener('click', () => { sound.tap(); endShare(); });
 
 $('done').addEventListener('click', () => { sound.tap(); finish(); });
 

@@ -71,3 +71,19 @@ export async function clear() {
   memory.clear();
   try { await run('readwrite', (s) => s.clear()); } catch {}
 }
+
+export async function get(id) {
+  if (memory.has(id)) return memory.get(id);
+  try { return await run('readonly', (s) => s.get(id)); } catch { return undefined; }
+}
+
+export async function update(id, patch) {
+  const item = await get(id);
+  if (!item) return;
+  Object.assign(item, patch);
+  if (memory.has(id)) memory.set(id, item);
+  else {
+    try { await run('readwrite', (s) => s.put(item)); } catch {}
+  }
+  return item;
+}

@@ -68,3 +68,5 @@ export const COUNTDOWN = 3;
 export const STAFF_PIN = '0604';
 // Photos per share sheet. iPad handles this many reliably in one go.
 export const SAVE_BATCH = 15;
+// Online photo service (worker/ folder). Empty turns QR codes and email off.
+export const API_URL = 'https://photobooth.photobooth-worker.workers.dev';

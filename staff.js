@@ -4,6 +4,7 @@
 import { STAFF_PIN, SAVE_BATCH, EVENT } from './config.js';
 import * as store from './store.js';
 import * as sound from './sound.js';
+import * as uploader from './uploader.js';
 
 const $ = (id) => document.getElementById(id);
 
@@ -102,6 +103,7 @@ async function refresh() {
   } catch {}
 
   renderGallery();
+  renderOnline();
 }
 
 function renderGallery() {
@@ -221,6 +223,40 @@ $('delete-all').addEventListener('click', async () => {
   note('All photos deleted from this iPad.', 'ok');
   refresh();
 });
+
+// Online sharing
+
+async function renderOnline() {
+  $('online-status').textContent = uploader.status().text;
+  const c = await uploader.pendingCounts();
+  const parts = [];
+  if (c.uploads) parts.push(`${c.uploads} ${c.uploads === 1 ? 'print' : 'prints'} waiting to upload`);
+  if (c.emails) parts.push(`${c.emails} ${c.emails === 1 ? 'email' : 'emails'} waiting to send`);
+  $('online-counts').textContent = parts.length ? parts.join(', ') : 'Nothing waiting.';
+  $('key-input').placeholder = uploader.boothKey() ? 'Booth key is saved (type to replace)' : 'Booth key';
+}
+
+$('key-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const key = $('key-input').value.trim();
+  if (!key) return;
+  uploader.setBoothKey(key);
+  $('key-input').value = '';
+  $('key-input').blur();
+  note('Booth key saved.', 'ok');
+  await uploader.flush();
+  renderOnline();
+});
+
+$('retry-now').addEventListener('click', async () => {
+  sound.tap();
+  note('Retrying...');
+  await uploader.flush();
+  note('');
+  renderOnline();
+});
+
+uploader.onChange(() => { if (!$('staff').hidden) renderOnline(); });
 
 $('staff-close').addEventListener('click', () => {
   sound.tap();

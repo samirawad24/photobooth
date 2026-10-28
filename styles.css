@@ -528,3 +528,68 @@ button {
 }
 .pin-keys button:active { background: var(--cream-deep); }
 .pin-keys .pin-cancel { font-family: var(--sans); font-size: 13px; letter-spacing: 0.12em; text-transform: uppercase; }
+
+/* Inputs: iPad will not type into fields that inherit user-select: none. */
+input {
+  -webkit-user-select: text;
+  user-select: text;
+  font: inherit;
+  font-size: 19px;
+  color: var(--ink);
+  background: var(--white);
+  border: 1.5px solid rgba(62, 85, 65, 0.4);
+  border-radius: 2px;
+  padding: 16px 16px;
+  min-width: 0;
+  -webkit-appearance: none;
+  appearance: none;
+}
+input:focus { outline: none; border-color: var(--green); }
+
+/* Share */
+
+.share { flex-direction: row; gap: 40px; align-items: stretch; }
+.share-print { flex: 1; min-width: 0; display: flex; align-items: center; justify-content: center; }
+.share-print img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  box-shadow: 0 1px 2px rgba(44, 64, 51, 0.2), 0 18px 40px rgba(44, 64, 51, 0.2);
+}
+.share-panel { width: 440px; flex: none; display: flex; flex-direction: column; justify-content: center; }
+.qr-block { display: flex; align-items: center; gap: 22px; margin: 8px 0 26px; }
+.qr-block canvas {
+  width: 200px;
+  height: 200px;
+  flex: none;
+  background: var(--white);
+  box-shadow: inset 0 0 0 1px rgba(62, 85, 65, 0.2);
+}
+.qr-title { font-family: var(--serif); font-style: italic; font-weight: 500; font-size: 26px; line-height: 1.15; color: var(--green-deep); margin: 0 0 8px; }
+.qr-sub { font-size: 15px; line-height: 1.45; margin: 0; color: var(--ink); opacity: 0.8; }
+.email-block .label { margin-top: 0; }
+.email-form { display: flex; gap: 10px; }
+.email-form input { flex: 1; }
+.email-form .btn { padding: 0 26px; }
+.email-msg { min-height: 20px; font-size: 15px; margin: 8px 0 0; color: #8A3B2E; }
+.sent-list { list-style: none; margin: 4px 0 0; padding: 0; font-size: 15px; line-height: 1.7; }
+.sent-list .sent { color: var(--green); }
+.sent-list .pending { color: var(--sage-deep); }
+.sent-list .failed { color: #8A3B2E; }
+.finish { margin-top: 26px; }
+
+@media (orientation: portrait) {
+  .share { flex-direction: column; gap: 18px; }
+  .share-print { min-height: 0; }
+  .share-panel { width: 100%; max-width: 560px; align-self: center; flex: none; }
+}
+
+/* Staff: online sharing */
+
+.online { margin: 18px 0 8px; padding: 18px 0; border-bottom: 1px solid rgba(62, 85, 65, 0.25); }
+.online-title { font-family: var(--serif); font-style: italic; font-weight: 500; font-size: 26px; color: var(--green-deep); margin: 0 0 8px; }
+.online-status, .online-counts { margin: 0 0 6px; font-size: 16px; }
+.online-counts { color: var(--sage-deep); }
+.key-form { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 12px; }
+.key-form input { flex: 1; min-width: 240px; font-size: 16px; }
+.key-form .btn { padding: 14px 18px; font-size: 13px; }
