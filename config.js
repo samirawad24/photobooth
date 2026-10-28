@@ -62,3 +62,9 @@ export const FILTER_ORDER = ['natural', 'bw', 'film', 'vintage', 'warm', 'glow',
 export const IDLE_SECONDS = 60;
 export const REVIEW_IDLE_SECONDS = 90;
 export const COUNTDOWN = 3;
+
+// Staff panel: tap the top left corner of the welcome screen 5 times, then
+// enter this PIN. It keeps guests out, it is not real security.
+export const STAFF_PIN = '0604';
+// Photos per share sheet. iPad handles this many reliably in one go.
+export const SAVE_BATCH = 15;

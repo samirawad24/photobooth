@@ -54,3 +54,20 @@ export async function count() {
   try { return ((await run('readonly', (s) => s.count())) || 0) + memory.size; }
   catch { return memory.size; }
 }
+
+export async function markSaved(ids) {
+  const set = new Set(ids);
+  for (const item of await all()) {
+    if (!set.has(item.id) || item.saved) continue;
+    item.saved = true;
+    if (memory.has(item.id)) memory.set(item.id, item);
+    else {
+      try { await run('readwrite', (s) => s.put(item)); } catch {}
+    }
+  }
+}
+
+export async function clear() {
+  memory.clear();
+  try { await run('readwrite', (s) => s.clear()); } catch {}
+}

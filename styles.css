@@ -438,3 +438,93 @@ button {
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
 }
+
+/* Staff */
+
+.secret {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 110px;
+  height: 110px;
+  z-index: 2;
+}
+
+.staff { overflow-y: auto; -webkit-overflow-scrolling: touch; padding-bottom: calc(40px + var(--safe-b)); }
+.staff-bar { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+.staff-bar .title { margin: 0; }
+.staff-bar .btn { padding: 14px 22px; font-size: 14px; }
+.staff-top {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 24px;
+  margin-top: 18px;
+  padding: 22px 0;
+  border-top: 1px solid rgba(62, 85, 65, 0.25);
+  border-bottom: 1px solid rgba(62, 85, 65, 0.25);
+}
+.stats p { margin: 0 0 6px; font-size: 18px; color: var(--ink); }
+.stats strong { font-family: var(--serif); font-size: 30px; font-weight: 600; color: var(--green-deep); margin-right: 4px; }
+.stats .muted { font-size: 14px; color: var(--sage-deep); margin-top: 8px; }
+.staff-actions { display: flex; flex-direction: column; gap: 10px; min-width: 300px; }
+.staff-actions .btn { padding: 18px 22px; font-size: 15px; }
+.staff-actions .btn:disabled { opacity: 0.45; }
+.text-btn { font-size: 15px; padding: 12px 0; text-decoration: underline; text-underline-offset: 4px; }
+.text-btn.danger { color: #8A3B2E; }
+.text-btn.armed { font-weight: 600; text-decoration: none; background: #8A3B2E; color: #fff; padding: 14px 16px; border-radius: 2px; }
+.staff-help { font-size: 15px; color: var(--ink); opacity: 0.8; margin: 16px 0 4px; }
+.staff-note { min-height: 24px; font-size: 16px; margin: 6px 0 14px; color: var(--green); }
+.staff-note[data-tone="bad"] { color: #8A3B2E; }
+.gallery-empty { font-family: var(--serif); font-style: italic; font-size: 26px; color: var(--sage-deep); }
+.gallery { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 18px 14px; }
+.shot { display: flex; flex-direction: column; gap: 6px; align-items: center; }
+.shot img { width: 100%; height: 210px; object-fit: contain; display: block; }
+.shot span { font-size: 12.5px; color: #8A3B2E; }
+.shot span.is-saved { color: var(--sage-deep); }
+
+.viewer {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  background: rgba(27, 35, 29, 0.96);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  padding: calc(20px + var(--safe-t)) 20px calc(20px + var(--safe-b));
+}
+.viewer img { max-width: 100%; max-height: calc(100% - 90px); object-fit: contain; -webkit-touch-callout: default; }
+.viewer-actions { display: flex; gap: 12px; }
+.btn.ghost.light { box-shadow: inset 0 0 0 1.5px var(--cream); color: var(--cream); }
+
+.pin {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  background: rgba(27, 35, 29, 0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.pin-box { background: var(--cream); padding: 28px 30px 22px; border-radius: 2px; text-align: center; box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3); }
+.pin-box .label { margin-top: 0; }
+.pin-dots { display: flex; justify-content: center; gap: 16px; margin: 6px 0 22px; }
+.pin-dots i { width: 14px; height: 14px; border-radius: 50%; box-shadow: inset 0 0 0 1.5px var(--green); }
+.pin-dots i.on { background: var(--green); }
+.pin-dots.shake { animation: shake 0.35s ease; }
+@keyframes shake { 25% { transform: translateX(-8px); } 50% { transform: translateX(8px); } 75% { transform: translateX(-4px); } }
+.pin-keys { display: grid; grid-template-columns: repeat(3, 84px); gap: 10px; }
+.pin-keys button {
+  height: 72px;
+  font-family: var(--sans);
+  font-weight: 300;
+  font-size: 30px;
+  color: var(--green-deep);
+  box-shadow: inset 0 0 0 1px rgba(62, 85, 65, 0.3);
+  border-radius: 2px;
+}
+.pin-keys button:active { background: var(--cream-deep); }
+.pin-keys .pin-cancel { font-family: var(--sans); font-size: 13px; letter-spacing: 0.12em; text-transform: uppercase; }

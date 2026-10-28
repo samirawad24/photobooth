@@ -4,13 +4,14 @@ import { createRenderer, cropFor } from './filters.js';
 import { cells, compose, spray, fontsReady } from './compose.js';
 import * as store from './store.js';
 import * as sound from './sound.js';
+import { initStaff, closeStaff } from './staff.js';
 
-const VERSION = 'v1';
+const VERSION = 'v2';
 // Prints match the mirrored preview, which is what guests expect to see.
 const MIRROR = true;
 
 const $ = (id) => document.getElementById(id);
-const screens = ['welcome', 'layout', 'camera', 'review', 'thanks'];
+const screens = ['welcome', 'layout', 'camera', 'review', 'thanks', 'staff'];
 const video = $('video');
 const view = $('view');
 const frame = $('frame');
@@ -64,6 +65,7 @@ setInterval(() => {
   if (state.screen === 'layout' && idle > IDLE_SECONDS) show('welcome');
   if (state.screen === 'camera' && !state.shooting && idle > IDLE_SECONDS) show('welcome');
   if (state.screen === 'review' && idle > REVIEW_IDLE_SECONDS) finish();
+  if (state.screen === 'staff' && idle > 180) closeStaff();
 }, 2000);
 
 // Keep the screen on while the booth runs.
@@ -593,7 +595,7 @@ document.addEventListener('visibilitychange', () => {
     return;
   }
   keepAwake();
-  if (state.screen !== 'welcome' && state.screen !== 'thanks') {
+  if (['layout', 'camera', 'review'].includes(state.screen)) {
     startCamera().then(() => { if (state.screen === 'camera') startPreview(); }).catch(showWelcomeError);
   }
 });
@@ -614,6 +616,7 @@ async function boot() {
   buildLayouts();
   buildFilterButtons($('filters'), (id) => { state.filter = id; markFilter($('filters')); });
   drawArt();
+  initStaff({ show });
   if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(() => {});
 }
 

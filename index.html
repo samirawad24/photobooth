@@ -21,6 +21,7 @@
 <body>
 
 <section class="screen welcome" id="welcome">
+  <button class="secret" id="secret" type="button" aria-label="Staff"></button>
   <div class="welcome-inner">
     <canvas class="welcome-art" id="welcome-art" aria-hidden="true"></canvas>
     <p class="eyebrow">Photo booth</p>
@@ -84,6 +85,50 @@
     <p class="date">Your photos are saved</p>
   </div>
 </section>
+
+<section class="screen paper staff" id="staff" hidden>
+  <header class="staff-bar">
+    <h2 class="title small">Staff</h2>
+    <button class="btn ghost" id="staff-close" type="button">Lock booth</button>
+  </header>
+  <div class="staff-top">
+    <div class="stats">
+      <p><strong id="st-total">0</strong> <span id="st-total-word">prints</span> on this iPad</p>
+      <p><strong id="st-new">0</strong> not saved to Photos yet</p>
+      <p class="muted" id="st-storage"></p>
+    </div>
+    <div class="staff-actions">
+      <button class="btn primary" id="save-new" type="button">Save to Photos</button>
+      <button class="btn ghost" id="save-all" type="button">Save all again</button>
+      <button class="text-btn danger" id="delete-all" type="button">Delete all photos</button>
+    </div>
+  </div>
+  <p class="staff-help">In the share sheet, tap <strong>Save Images</strong>. Photos are only marked as saved after the share sheet closes.</p>
+  <p class="staff-note" id="staff-note" role="status"></p>
+  <p class="gallery-empty" id="gallery-empty" hidden>No prints yet.</p>
+  <div class="gallery" id="gallery"></div>
+</section>
+
+<div class="viewer" id="viewer" hidden>
+  <img id="viewer-img" alt="Print">
+  <div class="viewer-actions">
+    <button class="btn ghost light" id="viewer-close" type="button">Close</button>
+    <button class="btn primary" id="viewer-save" type="button">Save to Photos</button>
+  </div>
+</div>
+
+<div class="pin" id="pin" hidden>
+  <div class="pin-box">
+    <p class="label on-paper">Staff PIN</p>
+    <div class="pin-dots" id="pin-dots"><i></i><i></i><i></i><i></i></div>
+    <div class="pin-keys" id="pin-keys">
+      <button type="button" data-key="1">1</button><button type="button" data-key="2">2</button><button type="button" data-key="3">3</button>
+      <button type="button" data-key="4">4</button><button type="button" data-key="5">5</button><button type="button" data-key="6">6</button>
+      <button type="button" data-key="7">7</button><button type="button" data-key="8">8</button><button type="button" data-key="9">9</button>
+      <button type="button" class="pin-cancel" id="pin-cancel">Cancel</button><button type="button" data-key="0">0</button><button type="button" data-key="del" aria-label="Delete">&#9003;</button>
+    </div>
+  </div>
+</div>
 
 <div class="flash" id="flash"></div>
 <video id="video" playsinline muted autoplay></video>
