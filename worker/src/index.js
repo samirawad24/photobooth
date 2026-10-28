@@ -1,18 +1,17 @@
-// Photo booth backend: stores each print for 14 days, serves the guest page
-// that a QR code or email points to, and emails prints through Resend.
+// Photo booth backend: stores each print for 14 days and serves the guest
+// page the booth's QR code points to.
 //
-// Secrets (wrangler secret put): BOOTH_KEY (the iPad sends it on every write)
-// and RESEND_KEY. Vars in wrangler.toml: ALLOWED_ORIGIN, MAIL_FROM, NAMES, DATE_TEXT.
+// Secret (wrangler secret put): BOOTH_KEY, which the iPad sends on every upload.
+// Vars in wrangler.toml: ALLOWED_ORIGIN, NAMES, DATE_TEXT, FILE_PREFIX.
 
 const DAY = 86400;
 const KEEP_DAYS = 14;
 const MAX_BYTES = 8 * 1024 * 1024;
-const MAX_EMAILS_PER_PRINT = 12;
 const ID = /^[a-f0-9-]{20,40}$/i;
 
 const cors = (env) => ({
   'Access-Control-Allow-Origin': env.ALLOWED_ORIGIN,
-  'Access-Control-Allow-Methods': 'GET, POST, PUT, OPTIONS',
+  'Access-Control-Allow-Methods': 'GET, PUT, OPTIONS',
   'Access-Control-Allow-Headers': 'Content-Type, X-Booth-Key',
   'Access-Control-Max-Age': '86400',
 });
@@ -63,33 +62,6 @@ export default {
       return json(env, { ok: true, expiresAt });
     }
 
-    // iPad asks for a print to be emailed to a guest.
-    if (path === '/api/email' && req.method === 'POST') {
-      if (!authorized(req, env)) return json(env, { error: 'unauthorized' }, 401);
-      let data;
-      try { data = await req.json(); } catch { return json(env, { error: 'bad json' }, 400); }
-      const id = String(data.id || '');
-      const to = String(data.to || '').trim().toLowerCase();
-      if (!ID.test(id)) return json(env, { error: 'bad id' }, 400);
-      if (!/^[^\s@,;<>]+@[^\s@,;<>]+\.[a-z]{2,}$/i.test(to) || to.length > 200) return json(env, { error: 'bad email' }, 400);
-
-      const photo = await env.PHOTOS.getWithMetadata(`p:${id}`, 'arrayBuffer');
-      if (!photo.value) return json(env, { error: 'photo not uploaded yet' }, 409);
-
-      const countKey = `e:${id}`;
-      const sent = JSON.parse((await env.PHOTOS.get(countKey)) || '[]');
-      if (sent.includes(to)) return json(env, { ok: true, duplicate: true });
-      if (sent.length >= MAX_EMAILS_PER_PRINT) return json(env, { error: 'too many emails for this print' }, 429);
-
-      const expiresAt = photo.metadata?.expiresAt || Math.floor(Date.now() / 1000) + KEEP_DAYS * DAY;
-      const link = `${url.origin}/p/${id}`;
-      const res = await sendEmail(env, { to, id, link, expiresAt, jpeg: photo.value });
-      if (!res.ok) return json(env, { error: 'email failed', detail: res.detail }, 502);
-      sent.push(to);
-      await env.PHOTOS.put(countKey, JSON.stringify(sent), { expiration: expiresAt });
-      return json(env, { ok: true });
-    }
-
     // Guest page and the image itself.
     m = path.match(/^\/i\/([^/]+)\.jpg$/);
     if (m && req.method === 'GET') {
@@ -120,39 +92,6 @@ export default {
     return new Response('Not found', { status: 404 });
   },
 };
-
-async function sendEmail(env, { to, id, link, expiresAt, jpeg }) {
-  const until = expiryText(expiresAt);
-  const bytes = new Uint8Array(jpeg);
-  let bin = '';
-  for (let i = 0; i < bytes.length; i += 0x8000) bin += String.fromCharCode.apply(null, bytes.subarray(i, i + 0x8000));
-  const html = `<!doctype html><html><body style="margin:0;background:#F3ECDD;padding:32px 16px;font-family:Georgia,serif;color:#2E3A2D">
-<table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td align="center">
-<table role="presentation" width="100%" style="max-width:520px" cellpadding="0" cellspacing="0"><tr><td align="center">
-<p style="font-family:Arial,sans-serif;font-size:12px;letter-spacing:4px;text-transform:uppercase;color:#8A9B7E;margin:0 0 10px">Photo booth</p>
-<h1 style="font-style:italic;font-weight:normal;font-size:38px;margin:0;color:#2C4033">${esc(env.NAMES)}</h1>
-<p style="font-family:Arial,sans-serif;font-size:12px;letter-spacing:4px;text-transform:uppercase;color:#3E5541;margin:12px 0 28px">${esc(env.DATE_TEXT)}</p>
-<p style="font-size:18px;line-height:1.5;margin:0 0 20px">Thank you for celebrating with us. Your photo booth print is attached to this email.</p>
-<p style="margin:0 0 24px"><a href="${link}" style="display:inline-block;background:#3E5541;color:#F3ECDD;text-decoration:none;font-family:Arial,sans-serif;font-size:14px;letter-spacing:3px;text-transform:uppercase;padding:16px 28px">View your print</a></p>
-<p style="font-family:Arial,sans-serif;font-size:14px;line-height:1.5;color:#6B5A3A;margin:0">The link works until ${until}. Save the photo to keep it.</p>
-</td></tr></table></td></tr></table></body></html>`;
-  const text = `Thank you for celebrating with us. Your photo booth print from ${env.NAMES}'s wedding is attached.\n\nView it online: ${link}\nThe link works until ${until}. Save the photo to keep it.`;
-
-  const r = await fetch('https://api.resend.com/emails', {
-    method: 'POST',
-    headers: { Authorization: `Bearer ${env.RESEND_KEY}`, 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      from: env.MAIL_FROM,
-      to: [to],
-      subject: `Your photo booth print from ${env.NAMES}'s wedding`,
-      html,
-      text,
-      attachments: [{ filename: `${env.FILE_PREFIX}-${id.slice(0, 8)}.jpg`, content: btoa(bin) }],
-    }),
-  });
-  if (r.ok) return { ok: true };
-  return { ok: false, detail: (await r.text()).slice(0, 300) };
-}
 
 function page(env, body, status = 200) {
   return new Response(`<!doctype html>

@@ -8,7 +8,7 @@ import { initStaff, closeStaff } from './staff.js';
 import { openShare, closeShare, sharingReady } from './share.js';
 import * as uploader from './uploader.js';
 
-const VERSION = 'v3';
+const VERSION = 'v4';
 // Prints match the mirrored preview, which is what guests expect to see.
 const MIRROR = true;
 
@@ -492,7 +492,6 @@ async function finish({ walkedAway = false } = {}) {
         blob,
         saved: false,
         uploaded: false,
-        emails: [],
       });
       uploader.flush();
     }

@@ -1,7 +1,7 @@
 // Network first so updates arrive right away, with a cached copy so the
 // booth still opens if the venue Wi-Fi drops.
 
-const CACHE = 'cm-booth-v3';
+const CACHE = 'cm-booth-v4';
 const FILES = [
   './', 'index.html', 'styles.css', 'booth.js', 'config.js', 'filters.js', 'compose.js', 'store.js', 'sound.js', 'staff.js', 'share.js', 'uploader.js', 'vendor/qrcode.js',
   'manifest.webmanifest', 'robots.txt', 'fonts/cormorant.woff2', 'fonts/cormorant-italic.woff2', 'fonts/jost.woff2',

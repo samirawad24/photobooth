@@ -228,11 +228,8 @@ $('delete-all').addEventListener('click', async () => {
 
 async function renderOnline() {
   $('online-status').textContent = uploader.status().text;
-  const c = await uploader.pendingCounts();
-  const parts = [];
-  if (c.uploads) parts.push(`${c.uploads} ${c.uploads === 1 ? 'print' : 'prints'} waiting to upload`);
-  if (c.emails) parts.push(`${c.emails} ${c.emails === 1 ? 'email' : 'emails'} waiting to send`);
-  $('online-counts').textContent = parts.length ? parts.join(', ') : 'Nothing waiting.';
+  const n = await uploader.pendingUploads();
+  $('online-counts').textContent = n ? `${n} ${n === 1 ? 'print' : 'prints'} waiting to upload` : 'Everything is uploaded.';
   $('key-input').placeholder = uploader.boothKey() ? 'Booth key is saved (type to replace)' : 'Booth key';
 }
 

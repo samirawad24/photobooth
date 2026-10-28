@@ -556,27 +556,17 @@ input:focus { outline: none; border-color: var(--green); }
   object-fit: contain;
   box-shadow: 0 1px 2px rgba(44, 64, 51, 0.2), 0 18px 40px rgba(44, 64, 51, 0.2);
 }
-.share-panel { width: 440px; flex: none; display: flex; flex-direction: column; justify-content: center; }
-.qr-block { display: flex; align-items: center; gap: 22px; margin: 8px 0 26px; }
-.qr-block canvas {
-  width: 200px;
-  height: 200px;
-  flex: none;
+.share-panel { width: 400px; flex: none; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; }
+.share-panel .title { text-align: center; margin-bottom: 22px; }
+.share-panel canvas {
+  width: 280px;
+  height: 280px;
   background: var(--white);
-  box-shadow: inset 0 0 0 1px rgba(62, 85, 65, 0.2);
+  box-shadow: inset 0 0 0 1px rgba(62, 85, 65, 0.2), 0 1px 2px rgba(44, 64, 51, 0.12), 0 10px 26px rgba(44, 64, 51, 0.12);
 }
-.qr-title { font-family: var(--serif); font-style: italic; font-weight: 500; font-size: 26px; line-height: 1.15; color: var(--green-deep); margin: 0 0 8px; }
-.qr-sub { font-size: 15px; line-height: 1.45; margin: 0; color: var(--ink); opacity: 0.8; }
-.email-block .label { margin-top: 0; }
-.email-form { display: flex; gap: 10px; }
-.email-form input { flex: 1; }
-.email-form .btn { padding: 0 26px; }
-.email-msg { min-height: 20px; font-size: 15px; margin: 8px 0 0; color: #8A3B2E; }
-.sent-list { list-style: none; margin: 4px 0 0; padding: 0; font-size: 15px; line-height: 1.7; }
-.sent-list .sent { color: var(--green); }
-.sent-list .pending { color: var(--sage-deep); }
-.sent-list .failed { color: #8A3B2E; }
-.finish { margin-top: 26px; }
+.qr-title { font-family: var(--serif); font-style: italic; font-weight: 500; font-size: 30px; line-height: 1.15; color: var(--green-deep); margin: 22px 0 8px; }
+.qr-sub { font-size: 16px; line-height: 1.5; margin: 0; color: var(--ink); opacity: 0.8; max-width: 340px; min-height: 48px; }
+.finish { margin-top: 28px; width: 100%; max-width: 320px; }
 
 @media (orientation: portrait) {
   .share { flex-direction: column; gap: 18px; }

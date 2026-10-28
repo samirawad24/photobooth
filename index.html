@@ -90,23 +90,10 @@
   <div class="share-print"><img id="share-img" alt="Your print"></div>
   <div class="share-panel">
     <h2 class="title small">Take it home</h2>
-    <div class="qr-block">
-      <canvas id="qr" aria-label="QR code for your print"></canvas>
-      <div>
-        <p class="qr-title">Scan with your phone camera</p>
-        <p class="qr-sub" id="qr-status"></p>
-      </div>
-    </div>
-    <div class="email-block">
-      <p class="label on-paper">Or get it by email</p>
-      <form class="email-form" id="email-form" novalidate autocomplete="off">
-        <input id="email" type="email" inputmode="email" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="send" placeholder="Your email address" aria-label="Your email address">
-        <button class="btn primary" type="submit">Send</button>
-      </form>
-      <p class="email-msg" id="email-msg" role="status"></p>
-      <ul class="sent-list" id="sent-list"></ul>
-    </div>
-    <button class="btn ghost finish" id="share-done" type="button">Finish</button>
+    <canvas id="qr" aria-label="QR code for your print"></canvas>
+    <p class="qr-title">Scan with your phone camera</p>
+    <p class="qr-sub" id="qr-status"></p>
+    <button class="btn primary finish" id="share-done" type="button">Finish</button>
   </div>
 </section>
 
@@ -129,7 +116,7 @@
   </div>
   <p class="staff-help">In the share sheet, tap <strong>Save Images</strong>. Photos are only marked as saved after the share sheet closes.</p>
   <div class="online">
-    <h3 class="online-title">Online sharing (QR code and email)</h3>
+    <h3 class="online-title">QR codes</h3>
     <p class="online-status" id="online-status"></p>
     <p class="online-counts" id="online-counts"></p>
     <form class="key-form" id="key-form" autocomplete="off">

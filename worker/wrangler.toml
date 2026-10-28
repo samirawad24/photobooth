@@ -5,7 +5,6 @@ workers_dev = true
 
 [vars]
 ALLOWED_ORIGIN = "https://samirawad24.github.io"
-MAIL_FROM = "Cooper & Marisa Photo Booth <photos@madebyawad.com>"
 NAMES = "Cooper & Marisa"
 DATE_TEXT = "June 4, 2027"
 FILE_PREFIX = "cooper-marisa"
